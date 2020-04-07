@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xhzren.drama.mapper.MessageMapper">
+
+  <insert id="addMessageHis" parameterType="cn.xhzren.drama.entity.MessageEntity">
+    insert into message_history(
+      id,
+      source_id,
+      content,
+      send_user,
+      receive_user,
+      send_status,
+      receive_status,
+      message_type,
+      content_type,
+      send_time,
+      receive_time,
+      status
+    )
+    values(
+      #{id},
+      #{sourceId},
+      #{content},
+      #{sendUser},
+      #{sendStatus},
+      #{receiveStatus},
+      #{messageType},
+      #{contentType},
+      #{sendTime},
+      #{receiveTime},
+      #{status}
+    )
+  </insert>
+
+  <!--<update id="modifyMessageHis" parameterType="cn.xhzren.drama.entity.MessageEntity">-->
+    <!--update message_history-->
+    <!--<set>-->
+      <!--<if test="">-->
+
+      <!--</if>-->
+    <!--</set>-->
+  <!--</update>-->
+
+  <select id="getMessageList" parameterType="cn.xhzren.drama.entity.query.MessageQuery" resultType="cn.xhzren.drama.entity.MessageEntity">
+    select
+    msg_his.id as 'id',
+    msg_his.content as 'content',
+    msg_his.source_id as 'sourceId',
+    msg_his.send_status as 'sendStatus',
+    msg_his.receive_status as 'receiveStatus',
+    msg_his.message_type as 'messageType',
+    msg_his.content_type as 'contentType',
+    msg_his.send_time as 'sendTime',
+    msg_his.receive_time as 'receiveTime',
+    send_user.nick_name as 'sendUser',
+    receive_user.nick_name as 'receiveUser'
+    from message_history msg_his
+    <if test="messageType == 1">
+      left join room on msg_his.source_id = room.id
+    </if>
+      left join account_info send_user on msg_his.send_user = send_user.id
+      left join account_info receive_user on msg_his.receive_user = receive_user.id
+
+    <where>
+      1=1
+      <if test="messageType != null">
+        msg_his.message_type = #{messageType}
+        <if test="messageType == 1">
+          and room.id = #{sourceId}
+        </if>
+      </if>
+      <if test="contentType != null">
+        and msg_his.content_type = #{contentType}
+      </if>
+      <if test="sourceId != null">
+        and msg_his.source_id = #{sourceId}
+      </if>
+      <if test="sendUser != null">
+        and msg_his.send_user = #{sendUser}
+      </if>
+      <if test="receiveUser != null">
+        and msg_his.receive_user = #{receiveUser}
+      </if>
+      <if test="sendStartTime != null">
+        <if test="sendEndTime != null">
+         and msg_his.send_time
+          between #{sendStartTime} and #{sendEndTime}
+        </if>
+      </if>
+      <if test="sendStartTime == null and sendEndTime != null">
+        and #{sendEndTime} > msg_his.send_time
+      </if>
+      <if test="sendStartTime != null and sendEndTime == null">
+        and msg_his.send_time > #{sendStartTime}
+      </if>
+      <if test="receiveStartTime != null">
+        <if test="receiveEndTime != null">
+          and msg_his.receive_time
+          between #{receiveStartTime} and #{receiveEndTime}
+        </if>
+      </if>
+      <if test="receiveStartTime == null and receiveEndTime != null">
+        and #{receiveEndTime} > msg_his.receive_time
+      </if>
+      <if test="receiveStartTime != null and receiveEndTime == null">
+        and msg_his.receive_time > #{receiveStartTime}
+      </if>
+      <if test="sendStatus != null">
+        and msg_his.send_status > #{sendStatus}
+      </if>
+      <if test="receiveStatus != null">
+        and msg_his.receive_status > #{receiveStatus}
+      </if>
+
+    </where>
+
+  </select>
+</mapper>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xhzren.drama.mapper.RoomMapper">
+
+  <insert id="addRoom" parameterType="cn.xhzren.drama.entity.Room">
+    insert into room(id, plot_id,host,capactiy,status,creator, create_time)
+    values (
+    #{id},
+    #{plotId},
+    #{host},
+    #{capactiy},
+    #{status},
+    #{creator},
+    #{create_time}
+    )
+  </insert>
+
+  <!--根据条件获取房间-->
+    <select id="getRooms" parameterType="cn.xhzren.drama.entity.query.RoomQuery"
+            resultType="cn.xhzren.drama.entity.result.RoomResult">
+      select room.id,plot.title,plot.desc,classify.content as 'classify'
+      from room room
+      left join drama_plot plot on room.plot_id = plot.id
+      left join drama_classify classify on plot.classify_id = classify.id
+      left join relevance_plot_tag plot_tag on plot_tag.plot_id = plot.id
+      left join drama_tag tag on tag.id = plot_tag.tag_id
+      <where>
+        <if test="classify != null">
+          classify.classify_id = #{classify}
+        </if>
+        <if test="title != null">
+         and plot.title like concat(concat('%', #{title}), '%')
+        </if>
+        <if test="creator != null">
+          and plot.creator = #{creator}
+        </if>
+        <if test="tags != null">
+          and tag in
+          <foreach item="item" index="index" collection="list"
+            open="(" separator="," close=")">
+            #{item}
+          </foreach>
+        </if>
+        and room.status=1
+      </where>
+    </select>
+
+  <!--当前账号还在哪些房间内-->
+  <select id="getOnlineRooms" resultType="cn.xhzren.drama.entity.Room">
+    select room.id,plot.title,plot.cover
+    from room_history his
+    left join room on his.room_id = room.id
+    left join drama_plot plot on room.plot_id = plot.id
+    left join drama_classify classify on plot.classify_id = classify.id
+     where
+     his.status = 1
+     and plot.creator = #{creator}
+  </select>
+
+  <select id="detailRoom" resultType="cn.xhzren.drama.entity.Room">
+    select room.id,plot.title,plot.cover
+    from room
+     where
+     his.status = 1
+     and plot.creator = #{creator}
+  </select>
+
+  <select id="getMessageList" parameterType="cn.xhzren.drama.entity.query.MessageQuery" resultType="cn.xhzren.drama.entity.MessageEntity">
+    select
+    msg_his.id as 'id',
+    msg_his.content as 'content',
+    msg_his.source_id as 'sourceId',
+    msg_his.send_status as 'sendStatus',
+    msg_his.receive_status as 'receive_status',
+    msg_his.message_type as 'messageType',
+    msg_his.content_type as 'contentType',
+    msg_his.send_time as 'sendTime',
+    msg_his.receive_time as 'receiveTime',
+    send_user.nick_name as 'sendUser',
+    receive_user.nick_name as 'receiveUser'
+    from message_history msg_his
+    <if test="messageType == 1">
+      left join room on msg_his.source_id = room.id
+    </if>
+    <if test="sendUser != null">
+      left join account_info send_user on msg_his.send_user = send_user.id
+    </if>
+    <if test="receiveUser != null">
+      left join account_info receive_user on msg_his.receive_user = receive_user.id
+    </if>
+
+    <where>
+      1=1
+      <if test="messageType != null">
+        msg_his.message_type = #{messageType}
+        <if test="messageType == 1">
+          and room.id = #{sourceId}
+        </if>
+      </if>
+      <if test="contentType != null">
+        and msg_his.content_type = #{contentType}
+      </if>
+      <if test="sourceId != null">
+        and msg_his.source_id = #{sourceId}
+      </if>
+      <if test="sendUser != null">
+        and msg_his.send_user = #{sendUser}
+      </if>
+      <if test="receiveUser != null">
+        and msg_his.receive_user = #{receiveUser}
+      </if>
+      <if test="sendStartTime != null">
+        <if test="sendEndTime != null">
+         and msg_his.send_time
+          between #{sendStartTime} and #{sendEndTime}
+        </if>
+      </if>
+      <if test="sendStartTime == null and sendEndTime != null">
+        and #{sendEndTime} > msg_his.send_time
+      </if>
+      <if test="sendStartTime != null and sendEndTime == null">
+        and msg_his.send_time > #{sendStartTime}
+      </if>
+      <if test="receiveStartTime != null">
+        <if test="receiveEndTime != null">
+          and msg_his.receive_time
+          between #{receiveStartTime} and #{receiveEndTime}
+        </if>
+      </if>
+      <if test="receiveStartTime == null and receiveEndTime != null">
+        and #{receiveEndTime} > msg_his.receive_time
+      </if>
+      <if test="receiveStartTime != null and receiveEndTime == null">
+        and msg_his.receive_time > #{receiveStartTime}
+      </if>
+      <if test="sendStatus != null">
+        and msg_his.send_status > #{sendStatus}
+      </if>
+      <if test="receiveStatus != null">
+        and msg_his.receive_status > #{receiveStatus}
+      </if>
+
+    </where>
+
+  </select>
+</mapper>

@@ -1,0 +1,17 @@
+syntax = "proto2";//protobuf版本
+option java_package = "cn.xhzren.drama.proto";
+option java_outer_classname = "Receive";
+
+ message ReceiveMessage {
+    enum ReceiveType {
+        UNIVERSAL = 0;
+        ROOM = 1;
+        PRIVATE_CHAT = 2;
+        COMMENT = 3;
+    }
+   required ReceiveType receive_type = 1;
+   required string id = 2;
+   required string receive_id = 3;
+   optional string content = 4;
+   optional string time = 5;
+ }

@@ -1,0 +1,15 @@
+syntax = "proto2";//protobuf版本
+option java_package = "cn.xhzren.drama.proto";
+option java_outer_classname = "Auth";
+
+ message AuthMessage {
+    enum AuthType {
+        UNIVERSAL = 0;
+        NOT_TOKEN = 1;
+        ACCOUNT_NOT_FOUNT = 2;
+        ACCOUNT_INCORRECT = 3;
+    }
+   required AuthType auth_type = 1;
+   optional string content = 2;
+   optional string time = 3;
+   }

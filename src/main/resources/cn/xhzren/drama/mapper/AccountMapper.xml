@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xhzren.drama.mapper.AccountMapper">
+
+
+    <insert id="registered" parameterType="cn.xhzren.drama.entity.account.AccountInfo" >
+      insert into
+      account_info(
+        id,
+        account,
+        pass_world,
+        phone,
+        create_time
+      )
+      values(
+        #{id},
+        #{account},
+        #{passWorld},
+        #{account},
+        #{createTime}
+      )
+    </insert>
+
+    <select id="getAccountInfo" parameterType="cn.xhzren.drama.entity.account.AccountInfo"
+            resultType="cn.xhzren.drama.entity.account.AccountInfo">
+      select * from account_info
+      <where>
+        <if test="account != null">
+          account = #{account}
+        </if>
+        <if test="nickName != null">
+            and nick_name = #{nickName}
+        </if>
+        <if test="id != null">
+          and id = #{id}
+        </if>
+      </where>
+    </select>
+</mapper>

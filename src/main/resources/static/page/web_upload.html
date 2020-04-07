@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <!--引入CSS-->
+    <link rel="stylesheet" type="text/css" href="../lib/webuploader/webuploader.css">
+    <link rel="stylesheet" type="text/css" href="../lib/layui/css/layui.css">
+    <link rel="stylesheet" type="text/css" href="../css/default.css">
+    <!--<script src="../js/vconsole.min.js"></script>-->
+    <style>
+
+        #uploader {
+            width: 70%;
+            height: 100%;
+            margin: 6.25rem auto;
+        }
+
+        #thelist {
+            margin-top: 2.25rem;
+        }
+
+        #progress {
+            width: 25rem;
+            height: 2.5rem;
+            margin-top: 1.875rem;
+        }
+
+        #progress-md5, #progress-value {
+            display: none;
+        }
+
+        #his-group {
+            margin-top: 2.5rem;
+        }
+
+        #experimentType, #thelist, .btns, #progress, #his-group {
+            margin-left: 30%;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div id="uploader" class="wu-example">
+        <div id="experimentType" class="layui-form-item">
+            <span>请选择实验类别</span>
+            <select id="experimentTypeValue">
+            </select>
+        </div>
+
+        <!--用来存放文件信息-->
+        <div id="thelist" class="uploader-list"></div>
+        <div class="btns">
+            <button id="picker">选择视频</button>
+            <button id="ctlBtn" class="layui-btn layui-btn-radius">开始上传</button>
+        </div>
+
+        <div id="progress">
+            <div id="progress-md5">
+                获取md5的进度为<span>0</span>%
+            </div>
+            <div id="progress-value">
+                上传文件的进度为<span>0</span>%
+            </div>
+        </div>
+
+        <div id="his-group">
+            <div>上传历史：</div>
+            <div id="hislist" class="uploader-list"></div>
+        </div>
+    </div>
+
+</div>
+</body>
+
+<script type="text/javascript" src="../lib/jquery.1.9.1.js"></script>
+<script type="text/javascript" src="../lib/layui/layui.js"></script>
+<script type="text/javascript" src="../lib/webuploader/webuploader.js"></script>
+<script type="text/javascript" src="../js/web_upload_start.js"></script>
+</html>

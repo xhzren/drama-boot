@@ -1,0 +1,37 @@
+syntax = "proto2";//protobuf版本
+option java_package = "cn.xhzren.drama.proto";
+option java_outer_classname = "DramaMessage";
+message ConMessage {
+ enum DataType {
+    UNIVERSAL = 0;
+    MAKE_ROOM = 1;
+    ROOM_CONVERT = 2;
+ }
+
+ required DataType data_type = 1;
+ optional RequestInfo request_info = 2;
+
+ oneof dataBody {
+ MakeRoom make_room = 3;
+ RoomConvert room_convert = 4;
+ }
+
+}
+
+message RequestInfo {
+    optional string token = 1;
+}
+
+message MakeRoom {
+   optional string host = 1;
+   optional string plot_id = 2;
+   repeated string actor_id = 3;
+   optional string capacity = 4;
+}
+
+ message RoomConvert {
+   required string room_id = 1;
+   required string actor_id = 2;
+   optional string account_id = 3;
+   optional string command = 4;
+ }

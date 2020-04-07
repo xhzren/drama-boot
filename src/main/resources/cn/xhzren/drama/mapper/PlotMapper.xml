@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.xhzren.drama.mapper.PlotMapper">
+
+  <insert id="addPlot" parameterType="cn.xhzren.drama.entity.Plot">
+    insert into drama_plot(id, title,desc,cover,tag,classify_id,creator)
+    values (
+    #{id},
+    #{title},
+    #{desc},
+    #{cover},
+    #{tag},
+    #{classify},
+    #{creator}
+    )
+  </insert>
+
+    <select id="getPlotList" parameterType="cn.xhzren.drama.entity.Plot"
+            resultType="cn.xhzren.drama.entity.Plot">
+      select plot.id, plot.title,plot.desc,plot.cover,plot.tag,plot.creator,
+      classify.content as 'classify'
+      from drama_plot plot
+      left join drama_classify classify on plot.classify_id = classify.id
+      <where>
+        <if test="classify != null">
+          classify.classify_id = #{classify}
+        </if>
+        <if test="title != null">
+          and plot.title like concat(concat('%', #{title}), '%')
+        </if>
+        <if test="creator != null">
+          and plot.creator = #{creator}
+        </if>
+      </where>
+    </select>
+</mapper>

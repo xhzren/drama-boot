@@ -1,0 +1,112 @@
+debug: true
+server:
+  # 访问端口
+  port: 7240
+  tomcat:
+    basedir: /home/demo/tmp
+# Rest API前缀地址
+restPath: /api
+# 媒体类型的请求前缀地址
+mediaPath: /media
+
+base:
+  application:
+    name: Test
+    shortName: T
+    version: 1.0.0
+    # web令牌有效期，单位秒
+    token-timeout: 1800
+    # app令牌有效期
+    app-token-timeout: 3600
+    # 动态加密盐有效期，单位秒，可以不配置，如果不配置请注释掉该项，默认值5
+    dynamicKey-timeout: 300
+
+security:
+#  密码加密hash算法，默认值MD5，可以不配置，如果不配置请注释掉该项，可选值MD5,SHA-1,SHA-256,SHA-384,SHA-512
+#  hash-algorithm:
+
+# 加密数据库密码的密钥；建议生产环境不要写在配置文件中而是通过-Djasypt.encryptor.password=xxx在启动时指定
+jasypt.encryptor.password: 3F4ZVILUpFXkJ4EF
+
+spring:
+  mvc:
+    view:
+      prefix: /
+      suffix: .html
+    static-path-pattern: /**
+    servlet:
+      load-on-startup: 1
+  datasource:
+    url: jdbc:mysql://120.27.209.32:3306/drama?useUnicode=true&characterEncoding=utf-8
+##    使用 '&' 定义mysql数据库连接用户锚点值&DBUSER, 作为activiti配置属性pring.activiti.database-schema的引用值，如不定义可删除spring.activiti.database-schema配置属性，否则会报错
+    username: &DBUSER root
+    password: 1998xhzren.Q
+    driver-class-name: com.mysql.jdbc.Driver
+   # druid.validationQuery: select 1
+
+  #  url: jdbc:oracle:thin:@172.16.17.155:1621:orcl
+#    使用 '&' 定义oracle数据库连接用户锚点值&DBUSER, 作为activiti配置属性spring.activiti.database-schema的引用值
+  #  username: &DBUSER NWWUSER
+    #通过一下命令生成括号中的密文，固定格式ENC(密文)
+    #java -cp jasypt-1.9.2.jar org.jasypt.intf.cli.JasyptPBEStringEncryptionCLI input="明文密码" password=加密密钥 algorithm=PBEWithMD5AndDES
+  #  password: ENC(4UV6B1ZinV0xwTTL7//1Sg==)
+  #  driver-class-name: oracle.jdbc.driver.OracleDriver
+  #  druid.validationQuery: SELECT 'x' FROM DUAL
+
+    druid.initialSize: 3
+    druid.maxActive: 3
+    druid.minIdle: 2
+    druid.maxWait: 60000
+    druid.timeBetweenEvictionRunsMillis: 60000
+    druid.minEvictableIdleTimeMillis: 300000
+  jpa:
+    show-sql: true
+  redis:
+    #地址
+    host: localhost
+    #端口
+    port: 6379
+    #索引库
+    database: 1
+    #密码
+    password:
+    #超时时间
+    timeout: 5000
+  activiti:
+#    默认值为true，校验流程文件，校验resources下的processes文件夹里的流程文件
+    check-process-definitions: false
+#    检测身份信息表是否存在
+    db-identity-used: false
+#    Activiti默认提供4 种历史级别:
+#    none: 不保存任何历史记录，可以提高系统的性能；
+#    activity：保存所有的流程实例、任务、活动信息；
+#    audit：也是Activiti的默认级别，保存所有的流程实例、任务、活动、表单属性；
+#    full：最完整的历史记录，除了包含Audit级别的信息之外还能保存详细信息，例如：流程变量。
+    history-level: full
+#    false：检查数据库表的版本和依赖库的版本， 如果版本不匹配就抛出异常。
+#    true: 构建流程引擎时，执行检查，如果需要就执行更新。 如果表不存在，就创建。（常用）
+#    create-drop: 构建流程引擎时创建数据库表， 关闭流程引擎时删除这些表。
+#    drop-create：先删除表再创建表。（常用，使用完成后改为true）
+#    create: 构建流程引擎时创建数据库表， 关闭流程引擎时不删除这些表。
+    database-schema-update: true
+#    oracle数据库此配置属性需设置登陆用户名（ps：此处通过锚点引用spring.datasource.username的值，用户名必须大写），mysql数据库可选择删除该配置属性
+    database-schema: *DBUSER
+
+mybatis:
+  # xml 文件路径
+  mapper-locations: classpath:**/*Mapper.xml
+  # 配置文件路径
+  config-location: classpath:mybatis-config.xml
+#  # 通用 mapper列表，多个以","分隔
+#  tk.mappers: com.demo.baseframework.core.persistence.BaseMapper
+
+# size（上传文件大小限制，单位/KB）
+uploadfile:
+  size: 20480
+  type: jpg,png,ico,bmp,jpeg,doc,docx,xls,xlsx,ppt,pptx,pdf,mp4,war,txt
+#  path: /home/demo/upload
+  path: d://upload
+netty:
+  connection:
+    port: 9877
+    host: 192.168.10.104
